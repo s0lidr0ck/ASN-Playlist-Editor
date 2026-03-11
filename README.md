@@ -63,10 +63,18 @@ npm start
 ```
 
 ## easyPanel Deployment
-1. Upload this ZIP file to easyPanel
-2. Use the included Dockerfile for container deployment
-3. Set port to 8080
-4. The application will be available immediately
+
+### Option A: Deploy from GitHub (recommended)
+1. Push this repo to GitHub (see below).
+2. In easyPanel: **Create** → **App** → choose **GitHub** as source.
+3. Select your repo and branch (e.g. `main` or `master`).
+4. Set **Port** to `8080`. Use the root **Dockerfile** (default).
+5. Deploy; easyPanel will build from the Dockerfile and run the app.
+
+### Option B: Upload ZIP
+1. Zip the project (excluding `node_modules`, `.git`) and upload to easyPanel.
+2. Use the included Dockerfile for container deployment.
+3. Set port to **8080**.
 
 ## API Endpoints
 - `GET /` - Main application interface
