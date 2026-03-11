@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Python (legacy)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Environment
+.env
+.env.*
+!.env.example
+.flaskenv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (keep directory via .gitkeep)
+uploads/*
+!uploads/.gitkeep
+temp/*
+!temp/.gitkeep
+
+# Logs & build
+*.log
+npm-debug.log*
+.npm
+
+# Local / backups (don’t commit to repo)
+.claude/
+*.zip

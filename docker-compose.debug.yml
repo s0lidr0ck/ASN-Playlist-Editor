@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  asn-playlist-debug:
+    build:
+      context: .
+      dockerfile: Dockerfile.debug
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    # Enable logging to see what's happening
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

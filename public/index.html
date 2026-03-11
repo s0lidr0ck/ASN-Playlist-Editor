@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASN Playlist Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #059669;
+            --error-color: #dc2626;
+            --warning-color: #d97706;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            min-height: 100vh;
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 95%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.025em;
+        }
+
+        .header p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .upload-section {
+            margin-bottom: 2rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: 0.5rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            background: var(--gray-50);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: #eff6ff;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: #eff6ff;
+            border-style: solid;
+        }
+
+        .upload-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            margin: 0 auto 0.75rem;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-info {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+        .file-info-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--gray-900);
+        }
+
+        .file-size {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
+        .preview-section {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .preview-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-title h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--gray-100);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .btn-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: var(--gray-600);
+        }
+
+        .btn-toggle:hover {
+            background: white;
+            color: var(--gray-800);
+        }
+
+        .btn-toggle.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-content-container {
+            position: relative;
+        }
+
+        .preview-content {
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            max-height: 24rem;
+            overflow-y: auto;
+            border: 1px solid var(--gray-200);
+        }
+
+        .code-view {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            display: none;
+            white-space: pre-wrap;
+        }
+
+        .pretty-view {
+            background: white;
+            color: var(--gray-800);
+            display: none;
+        }
+
+        .pretty-view.active {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 1rem;
+            align-items: stretch !important;
+            flex-wrap: nowrap !important;
+            width: 100% !important;
+            min-height: 500px !important;
+            max-height: 500px;
+            overflow: hidden;
+        }
+
+        .code-view.active {
+            display: block;
+        }
+
+        .browser-card {
+            flex: 0 0 33.333% !important;
+            width: 33.333% !important;
+            min-width: 300px !important;
+            max-width: 33.333% !important;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .browser-header {
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .browser-header h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .tree-browser {
+            background: white;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .preview-card {
+            flex: 1 1 66.666% !important;
+            width: 66.666% !important;
+            min-width: 400px !important;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100%;
+            max-height: 500px;
+        }
+
+        .preview-card-header {
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .preview-card-header h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .block-preview {
+            background: white;
+            border: none;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+            min-height: 0;
+        }
+
+        .preview-header-section {
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem;
+            flex-shrink: 0;
+        }
+
+        .preview-title-section {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-subtitle {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .preview-content-section {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .preview-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-height: 20rem;
+            color: var(--gray-400);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .preview-empty i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .tree-view {
+            font-family: inherit;
+            padding: 0.5rem;
+        }
+
+        .item-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .item-entry {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            margin-bottom: 0.25rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .item-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .item-media {
+            background: #000000;
+        }
+
+        .item-marker {
+            background: #dc2626;
+        }
+
+        .item-bug {
+            background: #fbbf24;
+        }
+
+        .item-block {
+            background: #000000;
+        }
+
+        .item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: var(--gray-900);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-path {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-family: 'SF Mono', Monaco, monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tree-node {
+            margin: 0;
+        }
+
+        .day-node {
+            margin-bottom: 1rem;
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray-800);
+            transition: all 0.2s ease;
+        }
+
+        .day-header:hover {
+            background: var(--gray-100);
+        }
+
+        .day-header.expanded {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom: none;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .day-content {
+            border: 1px solid var(--gray-200);
+            border-top: none;
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            background: white;
+            display: none;
+        }
+
+        .day-content.expanded {
+            display: block;
+        }
+
+        .block-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .block-item:last-child {
+            border-bottom: none;
+        }
+
+        .block-item:hover {
+            background: var(--gray-50);
+        }
+
+        .block-item.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .block-item.selected .block-name,
+        .block-item.selected .block-time,
+        .block-item.selected .block-stats {
+            color: white;
+        }
+
+        .block-icon {
+            width: 2rem;
+            height: 2rem;
+            background: #000000;
+            color: white;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .block-info {
+            flex: 1;
+        }
+
+        .block-name {
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 0.125rem;
+        }
+
+        .block-time {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        .block-stats {
+            text-align: right;
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        .expand-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: var(--error-color);
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            color: var(--success-color);
+            border: 1px solid #a7f3d0;
+        }
+
+        .toolbar {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            display: none;
+        }
+
+        .toolbar.active {
+            display: block;
+        }
+
+        .toolbar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .toolbar-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toolbar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-item {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .tool-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tool-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-description {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-input {
+            width: 100%;
+            padding: 0.375rem 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .tool-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgb(37 99 235 / 0.1);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .footer p {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            /* Keep side-by-side layout even on mobile */
+            .pretty-view.active {
+                display: flex !important;
+                flex-direction: row !important;
+            }
+
+            .browser-card {
+                min-width: 200px !important;
+            }
+
+            .preview-card {
+                min-width: 300px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>ASN Playlist Generator</h1>
+            <p>Professional broadcast playlist generation from ASN log files with automated block structuring, SCTE35 markers, and bug graphics</p>
+        </header>
+
+        <main class="main-card">
+            <div class="card-header">
+                <h2><i class="fas fa-list-ul"></i> Generate Playlist</h2>
+            </div>
+            
+            <div class="card-body">
+
+
+                <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                    <div class="upload-section">
+                        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="upload-text">Select or drag log files</div>
+                            <div class="upload-subtext">Supports multiple .log files • Combines into single ASN.in playlist</div>
+                        </div>
+                        <input type="file" id="fileInput" name="file" accept=".log" class="file-input" multiple>
+                    </div>
+                </form>
+
+                <div class="file-info" id="fileInfo">
+                    <div class="file-info-header">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="file-name" id="fileName"></span>
+                    </div>
+                    <div class="file-size" id="fileSize"></div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Processing files...</div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="previewBtn" onclick="previewFile()" disabled>
+                        <i class="fas fa-eye"></i>
+                        Preview Playlist
+                    </button>
+                    <button class="btn btn-secondary" id="toolsBtn" onclick="toggleTools()" disabled>
+                        <i class="fas fa-tools"></i>
+                        Playlist Tools
+                    </button>
+                    <button class="btn btn-primary" id="downloadBtn" onclick="downloadFile()" disabled>
+                        <i class="fas fa-download"></i>
+                        Generate & Download
+                    </button>
+                </div>
+
+                <div class="toolbar" id="playlistTools">
+                    <div class="toolbar-header">
+                        <div class="toolbar-title">
+                            <i class="fas fa-tools"></i>
+                            Playlist Management Tools
+                        </div>
+                        <button class="btn btn-secondary" onclick="toggleTools()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                    </div>
+                    <div class="toolbar-grid">
+                        <div class="tool-item">
+                            <div class="tool-label">Copy Day</div>
+                            <div class="tool-description">Copy all blocks from one day to another</div>
+                            <input type="date" class="tool-input" placeholder="From Date" id="copyFromDate">
+                            <input type="date" class="tool-input" placeholder="To Date" id="copyToDate" style="margin-top: 0.5rem;">
+                            <button class="btn btn-primary" style="margin-top: 0.5rem; font-size: 0.75rem; padding: 0.375rem 0.75rem;" onclick="copyDay()">
+                                <i class="fas fa-copy"></i>
+                                Copy Day
+                            </button>
+                        </div>
+                        <div class="tool-item">
+                            <div class="tool-label">Search & Replace</div>
+                            <div class="tool-description">Find and replace text in playlist items</div>
+                            <input type="text" class="tool-input" placeholder="Search for..." id="searchText">
+                            <input type="text" class="tool-input" placeholder="Replace with..." id="replaceText" style="margin-top: 0.5rem;">
+                            <button class="btn btn-primary" style="margin-top: 0.5rem; font-size: 0.75rem; padding: 0.375rem 0.75rem;" onclick="searchReplace()">
+                                <i class="fas fa-search"></i>
+                                Replace All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-section" id="previewSection">
+                    <div class="preview-header">
+                        <div class="preview-title">
+                            <i class="fas fa-eye"></i>
+                            <h3>Playlist Preview</h3>
+                        </div>
+                        <div class="preview-controls">
+                            <button class="btn-toggle active" id="prettyModeBtn" onclick="switchPreviewMode('pretty')">
+                                <i class="fas fa-sitemap"></i>
+                                Pretty
+                            </button>
+                            <button class="btn-toggle" id="codeModeBtn" onclick="switchPreviewMode('code')">
+                                <i class="fas fa-code"></i>
+                                Code
+                            </button>
+                        </div>
+                    </div>
+                    <div class="preview-content-container">
+                        <div class="preview-content code-view" id="previewContent"></div>
+                        <div class="preview-content pretty-view" id="prettyPreview">
+                            <div class="browser-card">
+                                <div class="browser-header">
+                                    <i class="fas fa-sitemap"></i>
+                                    <h4>Playlist Structure</h4>
+                                </div>
+                                <div class="tree-browser" id="treeBrowser"></div>
+                            </div>
+                            <div class="preview-card">
+                                <div class="preview-card-header">
+                                    <i class="fas fa-eye"></i>
+                                    <h4>Block Details</h4>
+                                </div>
+                                <div class="block-preview" id="blockPreview">
+                                    <div class="preview-empty">
+                                        <i class="fas fa-mouse-pointer"></i>
+                                        <div>Select a block above to view its contents</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>ASN Playlist Generator • Professional broadcast automation tools</p>
+        </footer>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        
+        const uploadArea = document.querySelector('.upload-area');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const previewBtn = document.getElementById('previewBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const toolsBtn = document.getElementById('toolsBtn');
+        const previewSection = document.getElementById('previewSection');
+        const previewContent = document.getElementById('previewContent');
+        const loading = document.getElementById('loading');
+        
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length > 0) {
+                handleFileSelect(files);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(Array.from(e.target.files));
+            }
+        });
+        
+        function handleFileSelect(files) {
+            const logFiles = files.filter(file => file.name.endsWith('.log'));
+            
+            if (logFiles.length === 0) {
+                alert('Please select .log files');
+                return;
+            }
+            
+            if (logFiles.length !== files.length) {
+                alert('Some files were ignored - only .log files are supported');
+            }
+            
+            selectedFiles = logFiles;
+            
+            if (logFiles.length === 1) {
+                fileName.textContent = logFiles[0].name;
+                fileSize.textContent = formatFileSize(logFiles[0].size);
+            } else {
+                fileName.textContent = `${logFiles.length} files selected`;
+                const totalSize = logFiles.reduce((sum, file) => sum + file.size, 0);
+                fileSize.textContent = `Total: ${formatFileSize(totalSize)}`;
+            }
+            
+            fileInfo.style.display = 'block';
+            previewBtn.disabled = false;
+            toolsBtn.disabled = false;
+            downloadBtn.disabled = false;
+            previewSection.style.display = 'none';
+            
+            // Auto-generate preview when files are selected
+            setTimeout(() => {
+                previewFile();
+            }, 100);
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        let currentPreviewData = null;
+        let currentPreviewMode = 'pretty';
+
+        async function previewFile() {
+            if (selectedFiles.length === 0) return;
+            
+            loading.style.display = 'block';
+            previewSection.style.display = 'none';
+            
+            const formData = new FormData();
+            selectedFiles.forEach(file => {
+                formData.append('file', file);
+            });
+            
+            try {
+                const response = await fetch('/preview', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentPreviewData = result;
+                    
+                    // Set up code view
+                    if (result.count === 1) {
+                        previewContent.textContent = result.previews[0].content;
+                    } else {
+                        let combinedContent = '';
+                        result.previews.forEach((preview, index) => {
+                            combinedContent += `// ========== ${preview.filename} ==========\n`;
+                            combinedContent += preview.content;
+                            if (index < result.previews.length - 1) {
+                                combinedContent += '\n\n';
+                            }
+                        });
+                        previewContent.textContent = combinedContent;
+                    }
+                    
+                    // Set up pretty view
+                    generatePrettyView(result);
+                    
+                    // Show preview section and set default mode
+                    previewSection.style.display = 'block';
+                    switchPreviewMode('pretty');
+                    
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function switchPreviewMode(mode) {
+            currentPreviewMode = mode;
+            
+            const prettyBtn = document.getElementById('prettyModeBtn');
+            const codeBtn = document.getElementById('codeModeBtn');
+            const prettyView = document.getElementById('prettyPreview');
+            const codeView = document.getElementById('previewContent');
+            
+            if (mode === 'pretty') {
+                prettyBtn.classList.add('active');
+                codeBtn.classList.remove('active');
+                prettyView.classList.add('active');
+                codeView.classList.remove('active');
+            } else {
+                codeBtn.classList.add('active');
+                prettyBtn.classList.remove('active');
+                codeView.classList.add('active');
+                prettyView.classList.remove('active');
+            }
+        }
+
+        let allBlocks = [];
+
+        function generatePrettyView(data) {
+            const treeBrowser = document.getElementById('treeBrowser');
+            const dayGroups = {};
+            allBlocks = [];
+            
+            // Parse all previews and group by date
+            data.previews.forEach(preview => {
+                const blocks = parsePlaylistBlocks(preview.content, preview.filename);
+                blocks.forEach(block => {
+                    const date = block.date;
+                    if (!dayGroups[date]) {
+                        dayGroups[date] = [];
+                    }
+                    dayGroups[date].push(block);
+                    allBlocks.push(block);
+                });
+            });
+            
+            // Generate HTML for tree browser
+            let html = '<div class="tree-view">';
+            
+            Object.keys(dayGroups).sort().forEach(date => {
+                const blocks = dayGroups[date];
+                const dayName = formatDate(date);
+                
+                html += `
+                    <div class="day-node">
+                        <div class="day-header" onclick="toggleDay('${date}')">
+                            <i class="fas fa-chevron-right expand-icon" id="expand-${date}"></i>
+                            <i class="fas fa-calendar-day"></i>
+                            <span>${dayName}</span>
+                            <span style="margin-left: auto; font-weight: normal; opacity: 0.8;">${blocks.length} blocks</span>
+                        </div>
+                        <div class="day-content" id="content-${date}">
+                `;
+                
+                blocks.forEach((block, index) => {
+                    // Create a unique block index across all blocks
+                    const globalIndex = allBlocks.findIndex(b => 
+                        b.date === block.date && 
+                        b.time === block.time && 
+                        b.name === block.name
+                    );
+                    
+                    html += `
+                        <div class="block-item" onclick="selectBlock(${globalIndex}, this)">
+                            <div class="block-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="block-info">
+                                <div class="block-name">${block.name}</div>
+                                <div class="block-time">${convertUtcMinus4ToEastern(block.time)} ET</div>
+                            </div>
+                            <div class="block-stats">
+                                ${block.itemCount} items
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            treeBrowser.innerHTML = html;
+        }
+
+        function parsePlaylistBlocks(content, filename) {
+            const blocks = [];
+            const lines = content.split('\n');
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Look for block headers (format: 2025-08-18T00:00:00	EventType=2	Name=...)
+                const blockMatch = line.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\s+EventType=2\s+Name=(.+)/);
+                if (blockMatch) {
+                    const [, date, time, name] = blockMatch;
+                    
+                    // Collect all items in this block (until next block or end)
+                    const blockItems = [];
+                    let itemCount = 0;
+                    
+                    for (let j = i + 1; j < lines.length; j++) {
+                        const nextLine = lines[j].trim();
+                        if (nextLine.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+                            break; // Next block found
+                        }
+                        if (nextLine) {
+                            blockItems.push(nextLine);
+                            if (nextLine.startsWith('D:\\MEDIA\\')) {
+                                itemCount++;
+                            }
+                        }
+                    }
+                    
+                    blocks.push({
+                        date,
+                        time,
+                        name,
+                        itemCount,
+                        items: blockItems,
+                        filename: filename || 'Unknown'
+                    });
+                }
+            }
+            
+            return blocks;
+        }
+
+        function selectBlock(blockIndex, element) {
+            // Remove selection from all blocks
+            document.querySelectorAll('.block-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Add selection to clicked block
+            if (element) {
+                element.classList.add('selected');
+            }
+            
+            // Find the block data
+            const block = allBlocks[blockIndex];
+            if (block) {
+                showBlockPreview(block);
+            }
+        }
+
+        function showBlockPreview(block) {
+            const blockPreview = document.getElementById('blockPreview');
+            
+            if (!blockPreview) {
+                console.error('blockPreview element not found!');
+                return;
+            }
+            
+            console.log('Updating blockPreview element:', blockPreview);
+            
+            let html = `
+                <div class="preview-header-section">
+                    <div class="preview-title-section">${block.name}</div>
+                    <div class="preview-subtitle">${formatDate(block.date)} at ${convertUtcMinus4ToEastern(block.time)} ET • ${block.itemCount} media items</div>
+                </div>
+                <div class="preview-content-section">
+                    <ul class="item-list">
+            `;
+            
+            block.items.forEach(item => {
+                const itemInfo = parsePlaylistItem(item);
+                if (itemInfo) {
+                    html += `
+                        <li class="item-entry">
+                            <div class="item-icon item-${itemInfo.type}">
+                                <i class="fas fa-${itemInfo.icon}"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-name">${itemInfo.name}</div>
+                                <div class="item-path">${itemInfo.path}</div>
+                            </div>
+                        </li>
+                    `;
+                }
+            });
+            
+            html += `
+                    </ul>
+                </div>
+            `;
+            
+            blockPreview.innerHTML = html;
+            
+            // Force a scroll to the preview area to see if it's there
+            blockPreview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function parsePlaylistItem(line) {
+            if (line.startsWith('!ShowLogo')) {
+                return {
+                    type: 'bug',
+                    icon: 'bug',
+                    name: 'Bug Graphic',
+                    path: 'D:\\Media\\Animations\\Bug.png'
+                };
+            } else if (line.startsWith('!Set Config SCTE35')) {
+                return {
+                    type: 'marker',
+                    icon: 'broadcast-tower',
+                    name: 'SCTE35 Marker',
+                    path: 'OutOfNetworkIndicator1WithPtsTime.xml'
+                };
+            } else if (line.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+                const match = line.match(/Name=(.+)/);
+                return {
+                    type: 'block',
+                    icon: 'folder',
+                    name: 'Block Header',
+                    path: match ? match[1] : 'Block Header'
+                };
+            } else if (line.startsWith('D:\\MEDIA\\')) {
+                const parts = line.split('\t');
+                const filePath = parts[0];
+                const fileName = filePath.split('\\').pop();
+                const match = line.match(/CartNo=([^\t]+)/);
+                const cartNo = match ? match[1] : fileName;
+                
+                return {
+                    type: 'media',
+                    icon: 'file-video',
+                    name: cartNo,
+                    path: filePath
+                };
+            }
+            
+            return null;
+        }
+
+        function formatDate(dateStr) {
+            // Convert UTC-4 date to Eastern Time
+            const date = new Date(dateStr + 'T00:00:00-04:00'); // Specify UTC-4 timezone
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                timeZone: 'America/New_York'
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function convertUtcMinus4ToEastern(timeStr) {
+            // timeStr format: "HH:MM:SS"
+            const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+            
+            // Create a date object with UTC-4 time (which is 4 hours behind UTC)
+            const utcMinus4Date = new Date();
+            utcMinus4Date.setUTCHours(hours + 4, minutes, seconds, 0); // Add 4 hours to convert UTC-4 to UTC
+            
+            // Format to Eastern Time
+            const easternTimeStr = utcMinus4Date.toLocaleTimeString('en-US', {
+                timeZone: 'America/New_York',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            return easternTimeStr;
+        }
+
+        function toggleDay(date) {
+            const content = document.getElementById(`content-${date}`);
+            const icon = document.getElementById(`expand-${date}`);
+            const header = icon.closest('.day-header');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                header.classList.remove('expanded');
+                icon.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                header.classList.add('expanded');
+                icon.classList.add('expanded');
+            }
+        }
+        
+        async function downloadFile() {
+            if (selectedFiles.length === 0) return;
+            
+            // If we have modified preview data (from Copy Day or other tools), use that instead
+            if (currentPreviewData && currentPreviewData.previews) {
+                try {
+                    // Create download from current preview data
+                    let combinedContent = '';
+                    
+                    if (currentPreviewData.count === 1) {
+                        combinedContent = currentPreviewData.previews[0].content;
+                    } else {
+                        combinedContent = currentPreviewData.previews.map(preview => preview.content).join('\n');
+                    }
+                    
+                    // Create blob and download
+                    const blob = new Blob([combinedContent], { type: 'text/plain' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = currentPreviewData.count === 1 ? currentPreviewData.previews[0].filename : 'ASN.in';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                } catch (error) {
+                    alert('Error creating download: ' + error.message);
+                }
+                return;
+            }
+            
+            // Fallback to original server-side processing if no preview data
+            const formData = new FormData();
+            selectedFiles.forEach(file => {
+                formData.append('file', file);
+            });
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    
+                    // Get filename from response headers or use default
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'ASN.in';
+                    if (contentDisposition && contentDisposition.includes('filename=')) {
+                        filename = contentDisposition.split('filename=')[1].replace(/"/g, '');
+                    }
+                    
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Error downloading file');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function toggleTools() {
+            const toolbar = document.getElementById('playlistTools');
+            toolbar.classList.toggle('active');
+        }
+
+        function copyDay() {
+            const fromDate = document.getElementById('copyFromDate').value;
+            const toDate = document.getElementById('copyToDate').value;
+            
+            if (!fromDate || !toDate) {
+                alert('Please select both from and to dates');
+                return;
+            }
+            
+            if (!currentPreviewData || !currentPreviewData.previews) {
+                alert('Please preview files first before using Copy Day');
+                return;
+            }
+            
+            // Find blocks for the source date
+            const sourceBlocks = allBlocks.filter(block => block.date === fromDate);
+            
+            if (sourceBlocks.length === 0) {
+                alert(`No blocks found for ${fromDate}. Make sure this date exists in your uploaded files.`);
+                return;
+            }
+            
+            // Check if target date already has blocks
+            const existingTargetBlocks = allBlocks.filter(block => block.date === toDate);
+            if (existingTargetBlocks.length > 0) {
+                if (!confirm(`${toDate} already has ${existingTargetBlocks.length} blocks. This will add ${sourceBlocks.length} more blocks. Continue?`)) {
+                    return;
+                }
+            }
+            
+            // Create new blocks for the target date
+            const newBlocks = sourceBlocks.map(sourceBlock => ({
+                ...sourceBlock,
+                date: toDate,
+                filename: `Copied from ${sourceBlock.filename}`
+            }));
+            
+            // Add new blocks to allBlocks array
+            allBlocks.push(...newBlocks);
+            
+            // Create new preview content for the copied day
+            const newPreviewContent = generatePreviewContentForBlocks(newBlocks, toDate);
+            
+            // Add the new preview to currentPreviewData
+            const newPreview = {
+                filename: `${toDate.replace(/-/g, '').substring(2)}ASN.in`,
+                content: newPreviewContent
+            };
+            
+            currentPreviewData.previews.push(newPreview);
+            currentPreviewData.count++;
+            
+            // Regenerate the pretty view
+            generatePrettyView(currentPreviewData);
+            
+            // Update code view if it's active
+            if (currentPreviewMode === 'code') {
+                updateCodeView();
+            }
+            
+            alert(`Successfully copied ${sourceBlocks.length} blocks from ${fromDate} to ${toDate}`);
+        }
+        
+        function generatePreviewContentForBlocks(blocks, targetDate) {
+            let content = '';
+            
+            blocks.forEach((block, index) => {
+                // Add block header
+                content += `${targetDate}T${block.time}\tEventType=2\tName=${block.name}\n`;
+                
+                // Add block items
+                block.items.forEach(item => {
+                    content += item + '\n';
+                });
+                
+                // Add spacing between blocks (except for last one)
+                if (index < blocks.length - 1) {
+                    content += '\n';
+                }
+            });
+            
+            return content;
+        }
+        
+        function updateCodeView() {
+            if (currentPreviewData.count === 1) {
+                previewContent.textContent = currentPreviewData.previews[0].content;
+            } else {
+                let combinedContent = '';
+                currentPreviewData.previews.forEach((preview, index) => {
+                    combinedContent += `// ========== ${preview.filename} ==========\n`;
+                    combinedContent += preview.content;
+                    if (index < currentPreviewData.previews.length - 1) {
+                        combinedContent += '\n\n';
+                    }
+                });
+                previewContent.textContent = combinedContent;
+            }
+        }
+
+        function searchReplace() {
+            const searchText = document.getElementById('searchText').value;
+            const replaceText = document.getElementById('replaceText').value;
+            
+            if (!searchText) {
+                alert('Please enter text to search for');
+                return;
+            }
+            
+            if (!currentPreviewData || !currentPreviewData.previews) {
+                alert('Please preview files first before using Search & Replace');
+                return;
+            }
+            
+            let totalReplacements = 0;
+            let affectedFiles = 0;
+            
+            // Perform search and replace on all preview content
+            currentPreviewData.previews.forEach(preview => {
+                const originalContent = preview.content;
+                const newContent = originalContent.split(searchText).join(replaceText);
+                
+                if (originalContent !== newContent) {
+                    preview.content = newContent;
+                    affectedFiles++;
+                    
+                    // Count replacements in this file
+                    const replacements = (originalContent.match(new RegExp(escapeRegExp(searchText), 'g')) || []).length;
+                    totalReplacements += replacements;
+                }
+            });
+            
+            if (totalReplacements === 0) {
+                alert(`No instances of "${searchText}" found in the playlist content.`);
+                return;
+            }
+            
+            // Remember the currently selected block before updating
+            const selectedBlock = document.querySelector('.block-item.selected');
+            let selectedBlockInfo = null;
+            if (selectedBlock) {
+                // Get the block info from the selected element
+                const blockName = selectedBlock.querySelector('.block-name')?.textContent;
+                const blockTime = selectedBlock.querySelector('.block-time')?.textContent?.replace(' ET', ''); // Remove ET suffix
+                selectedBlockInfo = { name: blockName, time: blockTime };
+            }
+            
+            // Update the blocks data to reflect changes
+            updateBlocksFromPreviewData();
+            
+            // Regenerate the pretty view
+            generatePrettyView(currentPreviewData);
+            
+            // Update code view
+            updateCodeView();
+            
+            // Ensure we're in the current preview mode and refresh the display
+            switchPreviewMode(currentPreviewMode);
+            
+            // Try to restore the previously selected block
+            if (selectedBlockInfo) {
+                // Find the block with matching name and time in the updated blocks
+                const blockIndex = allBlocks.findIndex(block => 
+                    block.name === selectedBlockInfo.name && 
+                    convertUtcMinus4ToEastern(block.time) === selectedBlockInfo.time
+                );
+                
+                if (blockIndex !== -1) {
+                    // Find the corresponding DOM element and select it
+                    const blockElements = document.querySelectorAll('.block-item');
+                    blockElements.forEach((element, index) => {
+                        const elementName = element.querySelector('.block-name')?.textContent;
+                        const elementTime = element.querySelector('.block-time')?.textContent?.replace(' ET', '');
+                        
+                        if (elementName === selectedBlockInfo.name && elementTime === selectedBlockInfo.time) {
+                            selectBlock(blockIndex, element);
+                            return;
+                        }
+                    });
+                }
+            }
+            
+            alert(`Successfully replaced ${totalReplacements} instances of "${searchText}" with "${replaceText}" in ${affectedFiles} file(s).`);
+        }
+        
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+        
+        function updateBlocksFromPreviewData() {
+            // Clear existing blocks
+            allBlocks = [];
+            
+            // Rebuild blocks from updated preview data
+            currentPreviewData.previews.forEach(preview => {
+                const blocks = parsePlaylistBlocks(preview.content, preview.filename);
+                allBlocks.push(...blocks);
+            });
+        }
+
+    </script>
+</body>
+</html>
