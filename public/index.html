@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASN Playlist Generator</title>
+    <title>ASN Playlist Tools</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -698,6 +698,178 @@
             display: block;
         }
 
+        .guide-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .guide-header-copy h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .guide-header-copy p {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .guide-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .guide-upload {
+            margin-bottom: 1rem;
+            border: 2px dashed var(--gray-300);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            background: var(--gray-50);
+        }
+
+        .guide-upload-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .guide-upload-copy {
+            min-width: 240px;
+        }
+
+        .guide-upload-copy strong {
+            display: block;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .guide-upload-copy span {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .guide-file-meta {
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            display: none;
+        }
+
+        .guide-file-meta.active {
+            display: block;
+        }
+
+        .guide-controls {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .guide-input,
+        .guide-select {
+            width: 100%;
+            padding: 0.75rem 0.875rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: white;
+        }
+
+        .guide-input:focus,
+        .guide-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+        }
+
+        .guide-status {
+            display: none;
+            margin-bottom: 1rem;
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .guide-status.active {
+            display: block;
+        }
+
+        .guide-status.error {
+            background: #fef2f2;
+            color: var(--error-color);
+            border: 1px solid #fecaca;
+        }
+
+        .guide-status.success {
+            background: #eff6ff;
+            color: var(--primary-color);
+            border: 1px solid #bfdbfe;
+        }
+
+        .guide-filters {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .guide-table-wrap {
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            overflow: auto;
+            max-height: 34rem;
+            background: white;
+        }
+
+        .guide-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 980px;
+        }
+
+        .guide-table th,
+        .guide-table td {
+            padding: 0.85rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: top;
+            font-size: 0.875rem;
+        }
+
+        .guide-table th {
+            position: sticky;
+            top: 0;
+            background: var(--gray-50);
+            z-index: 1;
+            color: var(--gray-700);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .guide-table tr:hover td {
+            background: #f8fbff;
+        }
+
+        .guide-table .missing td {
+            color: #991b1b;
+        }
+
+        .guide-empty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--gray-500);
+        }
+
         .toolbar-header {
             display: flex;
             align-items: center;
@@ -772,6 +944,49 @@
             font-size: 0.875rem;
         }
 
+        /* ── Navigation ── */
+        .nav-bar {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--gray-100);
+            padding: 0.3rem;
+            border-radius: 0.625rem;
+            margin: 0 auto 1.5rem;
+            max-width: 28rem;
+        }
+
+        .nav-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: var(--gray-600);
+        }
+
+        .nav-btn:hover {
+            color: var(--gray-800);
+            background: rgba(255,255,255,0.5);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
         @media (max-width: 640px) {
             .container {
                 padding: 1rem;
@@ -793,6 +1008,11 @@
                 flex-direction: column;
             }
 
+            .guide-controls,
+            .guide-filters {
+                grid-template-columns: 1fr;
+            }
+
             /* Keep side-by-side layout even on mobile */
             .pretty-view.active {
                 display: flex !important;
@@ -812,10 +1032,21 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>ASN Playlist Generator</h1>
-            <p>Professional broadcast playlist generation from ASN log files with automated block structuring, SCTE35 markers, and bug graphics</p>
+            <h1>ASN Playlist Tools</h1>
+            <p>Broadcast playlist generation and TV guide management</p>
         </header>
 
+        <nav class="nav-bar">
+            <button class="nav-btn active" data-page="playlist" onclick="switchPage('playlist')">
+                <i class="fas fa-list-ul"></i> Playlist Generator
+            </button>
+            <button class="nav-btn" data-page="guide" onclick="switchPage('guide')">
+                <i class="fas fa-tv"></i> TV Guide
+            </button>
+        </nav>
+
+        <!-- ════════ PAGE 1: PLAYLIST GENERATOR ════════ -->
+        <div id="page-playlist" class="page active">
         <main class="main-card">
             <div class="card-header">
                 <h2><i class="fas fa-list-ul"></i> Generate Playlist</h2>
@@ -942,15 +1173,108 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
+        </div>
+
+        <!-- ════════ PAGE 2: TV GUIDE ════════ -->
+        <div id="page-guide" class="page">
+        <main class="main-card">
+            <div class="card-header" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                <h2><i class="fas fa-tv"></i> TV Guide</h2>
+            </div>
+            
+            <div class="card-body">
+                <p style="color: var(--gray-600); margin-bottom: 1.25rem;">Generate a TV guide from an ASN.in playlist file. Show metadata is pulled from the master spreadsheet automatically.</p>
+
+                <div class="guide-header" style="margin-bottom:0;">
+                    <div></div>
+                    <div class="guide-actions">
+                        <button class="btn btn-secondary" id="guideGenerateBtn" onclick="generateGuide()" disabled>
+                            <i class="fas fa-table"></i>
+                            Generate Guide
+                        </button>
+                        <button class="btn btn-primary" id="guideDownloadBtn" onclick="downloadGuideCsv()" disabled>
+                            <i class="fas fa-file-csv"></i>
+                            Download CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-upload" style="margin-top:1rem;">
+                    <div class="guide-upload-row">
+                        <div class="guide-upload-copy">
+                            <strong>Upload a fresh ASN.in file</strong>
+                            <span>The guide is generated from the file you choose here each time.</span>
+                        </div>
+                        <div class="guide-actions">
+                            <input type="file" id="guideFileInput" accept=".in" class="file-input">
+                            <button class="btn btn-secondary" onclick="document.getElementById('guideFileInput').click()">
+                                <i class="fas fa-file-upload"></i>
+                                Select ASN.in
+                            </button>
+                        </div>
+                    </div>
+                    <div class="guide-file-meta" id="guideFileMeta"></div>
+                </div>
+
+                <div class="guide-status" id="guideStatus"></div>
+
+                <div class="guide-controls">
+                    <input type="text" id="guideSearch" class="guide-input" placeholder="Search the full guide...">
+                    <select id="guideSort" class="guide-select">
+                        <option value="newest">Sort by newest</option>
+                        <option value="oldest">Sort by oldest</option>
+                    </select>
+                </div>
+
+                <div class="guide-filters">
+                    <input type="text" class="guide-input" data-guide-filter="Date" placeholder="Filter date">
+                    <input type="text" class="guide-input" data-guide-filter="Time" placeholder="Filter time">
+                    <input type="text" class="guide-input" data-guide-filter="ASN" placeholder="Filter ASN">
+                    <input type="text" class="guide-input" data-guide-filter="Show Name" placeholder="Filter show name">
+                    <input type="text" class="guide-input" data-guide-filter="Episode Title" placeholder="Filter episode title">
+                    <input type="text" class="guide-input" data-guide-filter="Episode Description" placeholder="Filter description">
+                </div>
+
+                <div class="guide-table-wrap">
+                    <table class="guide-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>ASN</th>
+                                <th>Show Name</th>
+                                <th>Episode Title</th>
+                                <th>Episode Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guideTableBody">
+                            <tr>
+                                <td colspan="6" class="guide-empty">Upload an <code>ASN.in</code> file to generate the guide.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        </div>
 
         <footer class="footer">
-            <p>ASN Playlist Generator • Professional broadcast automation tools</p>
+            <p>ASN Playlist Tools • Professional broadcast automation</p>
         </footer>
     </div>
 
     <script>
+        /* ── Page Navigation ── */
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.querySelector('.nav-btn[data-page="' + pageId + '"]').classList.add('active');
+        }
+
         let selectedFiles = [];
         
         const uploadArea = document.querySelector('.upload-area');
@@ -964,6 +1288,15 @@
         const previewSection = document.getElementById('previewSection');
         const previewContent = document.getElementById('previewContent');
         const loading = document.getElementById('loading');
+        const guideTableBody = document.getElementById('guideTableBody');
+        const guideStatus = document.getElementById('guideStatus');
+        const guideSearch = document.getElementById('guideSearch');
+        const guideSort = document.getElementById('guideSort');
+        const guideGenerateBtn = document.getElementById('guideGenerateBtn');
+        const guideDownloadBtn = document.getElementById('guideDownloadBtn');
+        const guideFilterInputs = Array.from(document.querySelectorAll('[data-guide-filter]'));
+        const guideFileInput = document.getElementById('guideFileInput');
+        const guideFileMeta = document.getElementById('guideFileMeta');
         
         // Drag and drop handlers
         uploadArea.addEventListener('dragover', (e) => {
@@ -1036,6 +1369,16 @@
         
         let currentPreviewData = null;
         let currentPreviewMode = 'pretty';
+        let guideRows = [];
+        let filteredGuideRows = [];
+        let selectedGuideFile = null;
+
+        guideSearch.addEventListener('input', applyGuideFilters);
+        guideSort.addEventListener('change', applyGuideFilters);
+        guideFilterInputs.forEach((input) => {
+            input.addEventListener('input', applyGuideFilters);
+        });
+        guideFileInput.addEventListener('change', handleGuideFileSelect);
 
         async function previewFile() {
             if (selectedFiles.length === 0) return;
@@ -1655,6 +1998,175 @@
                 const blocks = parsePlaylistBlocks(preview.content, preview.filename);
                 allBlocks.push(...blocks);
             });
+        }
+
+        function handleGuideFileSelect(event) {
+            const [file] = Array.from(event.target.files || []);
+
+            if (!file) {
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith('.in')) {
+                selectedGuideFile = null;
+                guideGenerateBtn.disabled = true;
+                guideDownloadBtn.disabled = true;
+                guideFileMeta.classList.remove('active');
+                guideFileMeta.textContent = '';
+                setGuideStatus('Please choose a valid ASN.in file.', 'error');
+                return;
+            }
+
+            selectedGuideFile = file;
+            guideGenerateBtn.disabled = false;
+            guideDownloadBtn.disabled = true;
+            guideRows = [];
+            filteredGuideRows = [];
+            renderGuideTable();
+            guideFileMeta.classList.add('active');
+            guideFileMeta.textContent = `${file.name} • ${formatFileSize(file.size)}`;
+            setGuideStatus(`Ready to generate the guide from ${file.name}.`, 'success');
+        }
+
+        function buildGuideFormData() {
+            const formData = new FormData();
+            formData.append('guideFile', selectedGuideFile);
+            return formData;
+        }
+
+        async function generateGuide() {
+            if (!selectedGuideFile) {
+                setGuideStatus('Upload an ASN.in file before generating the guide.', 'error');
+                return;
+            }
+
+            guideGenerateBtn.disabled = true;
+            guideDownloadBtn.disabled = true;
+            setGuideStatus(`Generating guide from ${selectedGuideFile.name}...`, 'success');
+
+            try {
+                const response = await fetch('/guide/preview', {
+                    method: 'POST',
+                    body: buildGuideFormData()
+                });
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || 'Failed to generate guide');
+                }
+
+                guideRows = result.rows || [];
+                applyGuideFilters();
+                guideDownloadBtn.disabled = guideRows.length === 0;
+                setGuideStatus(`Loaded ${guideRows.length} guide rows from ${result.sourceFile}.`, 'success');
+            } catch (error) {
+                guideRows = [];
+                filteredGuideRows = [];
+                renderGuideTable();
+                setGuideStatus(error.message, 'error');
+            } finally {
+                guideGenerateBtn.disabled = false;
+            }
+        }
+
+        function applyGuideFilters() {
+            const searchValue = guideSearch.value.trim().toLowerCase();
+            const sortValue = guideSort.value;
+            const columnFilters = Object.fromEntries(
+                guideFilterInputs.map((input) => [input.dataset.guideFilter, input.value.trim().toLowerCase()])
+            );
+
+            filteredGuideRows = guideRows.filter((row) => {
+                const matchesSearch = !searchValue || Object.values(row).some((value) =>
+                    String(value).toLowerCase().includes(searchValue)
+                );
+
+                if (!matchesSearch) {
+                    return false;
+                }
+
+                return Object.entries(columnFilters).every(([column, filterValue]) => {
+                    return !filterValue || String(row[column] || '').toLowerCase().includes(filterValue);
+                });
+            }).sort((left, right) => {
+                const leftKey = `${left.Date} ${left.Time}`;
+                const rightKey = `${right.Date} ${right.Time}`;
+                return sortValue === 'oldest'
+                    ? leftKey.localeCompare(rightKey)
+                    : rightKey.localeCompare(leftKey);
+            });
+
+            renderGuideTable();
+        }
+
+        function renderGuideTable() {
+            if (!guideRows.length) {
+                guideTableBody.innerHTML = '<tr><td colspan="6" class="guide-empty">Upload an <code>ASN.in</code> file to generate the guide.</td></tr>';
+                return;
+            }
+
+            if (!filteredGuideRows.length) {
+                guideTableBody.innerHTML = '<tr><td colspan="6" class="guide-empty">No guide rows match the current search or filters.</td></tr>';
+                return;
+            }
+
+            guideTableBody.innerHTML = filteredGuideRows.map((row) => {
+                const missingClass = row['Show Name'] === 'Missing' ? ' class="missing"' : '';
+                return `
+                    <tr${missingClass}>
+                        <td>${escapeHtml(row.Date)}</td>
+                        <td>${escapeHtml(row.Time)}</td>
+                        <td>${escapeHtml(row.ASN)}</td>
+                        <td>${escapeHtml(row['Show Name'])}</td>
+                        <td>${escapeHtml(row['Episode Title'])}</td>
+                        <td>${escapeHtml(row['Episode Description'])}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function setGuideStatus(message, type) {
+            guideStatus.textContent = message;
+            guideStatus.className = `guide-status active ${type}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        async function downloadGuideCsv() {
+            if (!selectedGuideFile) {
+                setGuideStatus('Upload an ASN.in file before downloading the guide CSV.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/guide/download', {
+                    method: 'POST',
+                    body: buildGuideFormData()
+                });
+                if (!response.ok) {
+                    const result = await response.json().catch(() => ({}));
+                    throw new Error(result.error || 'Failed to download guide CSV');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'ASN_Guide.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                setGuideStatus(error.message, 'error');
+            }
         }
 
     </script>

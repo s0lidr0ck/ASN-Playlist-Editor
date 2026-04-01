@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { generateGuide } = require('./guide-generator');
 
 console.log('🚀 =================================');
 console.log('🚀 ASN Playlist Generator (Node.js)');
@@ -44,6 +45,20 @@ const upload = multer({
             cb(null, true);
         } else {
             cb(new Error('Only .log files are allowed'));
+        }
+    }
+});
+
+const guideUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 16 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.originalname.toLowerCase().endsWith('.in')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only .in files are allowed for guide generation'));
         }
     }
 });
@@ -196,6 +211,49 @@ app.get('/health', (req, res) => {
         port: port,
         timestamp: new Date().toISOString()
     });
+});
+
+app.post('/guide/preview', guideUpload.single('guideFile'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Please upload an ASN.in file' });
+        }
+
+        const result = await generateGuide({
+            asnContent: req.file.buffer.toString('utf8'),
+            sourceLabel: req.file.originalname
+        });
+
+        res.json({
+            success: true,
+            sourceFile: result.sourceFile,
+            rowCount: result.rowCount,
+            rows: result.rows
+        });
+    } catch (error) {
+        console.error('Guide preview error:', error);
+        res.status(500).json({ error: `Error generating guide: ${error.message}` });
+    }
+});
+
+app.post('/guide/download', guideUpload.single('guideFile'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Please upload an ASN.in file' });
+        }
+
+        const result = await generateGuide({
+            asnContent: req.file.buffer.toString('utf8'),
+            sourceLabel: req.file.originalname
+        });
+
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', 'attachment; filename="ASN_Guide.csv"');
+        res.send(result.csvContent);
+    } catch (error) {
+        console.error('Guide download error:', error);
+        res.status(500).json({ error: `Error generating guide CSV: ${error.message}` });
+    }
 });
 
 // Preview endpoint
