@@ -253,25 +253,43 @@ app.post('/guide/download', guideUpload.single('guideFile'), async (req, res) =>
             sourceLabel: req.file.originalname
         });
 
-        // Upload to S3 alongside the download
-        try {
-            await s3.send(new PutObjectCommand({
-                Bucket: S3_BUCKET,
-                Key: S3_KEY,
-                Body: result.csvContent,
-                ContentType: 'text/csv; charset=utf-8'
-            }));
-            console.log(`✅ Guide uploaded to s3://${S3_BUCKET}/${S3_KEY}`);
-        } catch (s3Err) {
-            console.error('⚠️ S3 upload failed (download still sent to user):', s3Err.message);
-        }
-
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', 'attachment; filename="ASN_Guide.csv"');
         res.send(result.csvContent);
     } catch (error) {
         console.error('Guide download error:', error);
         res.status(500).json({ error: `Error generating guide CSV: ${error.message}` });
+    }
+});
+
+app.post('/guide/save', guideUpload.single('guideFile'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Please upload an ASN.in file' });
+        }
+
+        const result = await generateGuide({
+            asnContent: req.file.buffer.toString('utf8'),
+            sourceLabel: req.file.originalname
+        });
+
+        await s3.send(new PutObjectCommand({
+            Bucket: S3_BUCKET,
+            Key: S3_KEY,
+            Body: result.csvContent,
+            ContentType: 'text/csv; charset=utf-8'
+        }));
+
+        console.log(`✅ Guide saved to s3://${S3_BUCKET}/${S3_KEY} (${result.rowCount} rows)`);
+        res.json({
+            success: true,
+            message: `Guide saved to S3 (${result.rowCount} rows)`,
+            bucket: S3_BUCKET,
+            key: S3_KEY
+        });
+    } catch (error) {
+        console.error('Guide save error:', error);
+        res.status(500).json({ error: `Error saving guide to S3: ${error.message}` });
     }
 });
 

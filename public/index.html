@@ -1195,7 +1195,11 @@
                             <i class="fas fa-table"></i>
                             Generate Guide
                         </button>
-                        <button class="btn btn-primary" id="guideDownloadBtn" onclick="downloadGuideCsv()" disabled>
+                        <button class="btn btn-primary" id="guideSaveBtn" onclick="saveGuideToS3()" disabled>
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-secondary" id="guideDownloadBtn" onclick="downloadGuideCsv()" disabled>
                             <i class="fas fa-file-csv"></i>
                             Download CSV
                         </button>
@@ -1293,6 +1297,7 @@
         const guideSearch = document.getElementById('guideSearch');
         const guideSort = document.getElementById('guideSort');
         const guideGenerateBtn = document.getElementById('guideGenerateBtn');
+        const guideSaveBtn = document.getElementById('guideSaveBtn');
         const guideDownloadBtn = document.getElementById('guideDownloadBtn');
         const guideFilterInputs = Array.from(document.querySelectorAll('[data-guide-filter]'));
         const guideFileInput = document.getElementById('guideFileInput');
@@ -2010,6 +2015,7 @@
             if (!file.name.toLowerCase().endsWith('.in')) {
                 selectedGuideFile = null;
                 guideGenerateBtn.disabled = true;
+                guideSaveBtn.disabled = true;
                 guideDownloadBtn.disabled = true;
                 guideFileMeta.classList.remove('active');
                 guideFileMeta.textContent = '';
@@ -2019,6 +2025,7 @@
 
             selectedGuideFile = file;
             guideGenerateBtn.disabled = false;
+            guideSaveBtn.disabled = true;
             guideDownloadBtn.disabled = true;
             guideRows = [];
             filteredGuideRows = [];
@@ -2041,6 +2048,7 @@
             }
 
             guideGenerateBtn.disabled = true;
+            guideSaveBtn.disabled = true;
             guideDownloadBtn.disabled = true;
             setGuideStatus(`Generating guide from ${selectedGuideFile.name}...`, 'success');
 
@@ -2057,6 +2065,7 @@
 
                 guideRows = result.rows || [];
                 applyGuideFilters();
+                guideSaveBtn.disabled = guideRows.length === 0;
                 guideDownloadBtn.disabled = guideRows.length === 0;
                 setGuideStatus(`Loaded ${guideRows.length} guide rows from ${result.sourceFile}.`, 'success');
             } catch (error) {
@@ -2137,6 +2146,32 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
+        }
+
+        async function saveGuideToS3() {
+            if (!selectedGuideFile) {
+                setGuideStatus('Upload an ASN.in file before saving the guide.', 'error');
+                return;
+            }
+
+            guideSaveBtn.disabled = true;
+            setGuideStatus('Saving guide to S3...', 'success');
+
+            try {
+                const response = await fetch('/guide/save', {
+                    method: 'POST',
+                    body: buildGuideFormData()
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to save guide to S3');
+                }
+                setGuideStatus('✅ ' + result.message, 'success');
+            } catch (error) {
+                setGuideStatus(error.message, 'error');
+            } finally {
+                guideSaveBtn.disabled = guideRows.length === 0;
+            }
         }
 
         async function downloadGuideCsv() {
