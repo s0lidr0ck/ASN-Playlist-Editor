@@ -2,7 +2,13 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { generateGuide } = require('./guide-generator');
+
+// S3 configuration — uses standard AWS env vars (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+const s3 = new S3Client({ region: process.env.AWS_REGION || 'us-east-1' });
+const S3_BUCKET = process.env.S3_GUIDE_BUCKET || 'asn.assets';
+const S3_KEY = process.env.S3_GUIDE_KEY || 'Guide/ASN_Guide.csv';
 
 console.log('🚀 =================================');
 console.log('🚀 ASN Playlist Generator (Node.js)');
@@ -246,6 +252,19 @@ app.post('/guide/download', guideUpload.single('guideFile'), async (req, res) =>
             asnContent: req.file.buffer.toString('utf8'),
             sourceLabel: req.file.originalname
         });
+
+        // Upload to S3 alongside the download
+        try {
+            await s3.send(new PutObjectCommand({
+                Bucket: S3_BUCKET,
+                Key: S3_KEY,
+                Body: result.csvContent,
+                ContentType: 'text/csv; charset=utf-8'
+            }));
+            console.log(`✅ Guide uploaded to s3://${S3_BUCKET}/${S3_KEY}`);
+        } catch (s3Err) {
+            console.error('⚠️ S3 upload failed (download still sent to user):', s3Err.message);
+        }
 
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', 'attachment; filename="ASN_Guide.csv"');
